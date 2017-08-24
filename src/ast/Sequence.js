@@ -17,7 +17,7 @@ class Sequence {
     unparse() {
         const statements = this.statements
             .filter((stmt) => (stmt !== undefined))
-            .map((stmt) => (stmt.toString()))
+            .map((stmt) => (stmt.unparse()))
             .join(" ");
         return `{ ${statements} }`;
     }

@@ -38,7 +38,6 @@ stmt ->
   | "{" stmt:* "}"                        {% ([, statements, ]) => (new Sequence(statements)) %}
   | "while" bexp "do" stmt                {% ([, cond, , body]) => (new WhileDo(cond, body)) %}
   | "if" bexp "then" stmt "else" stmt     {% ([, cond, , thenBody, , elseBody]) => (new IfThenElse(cond, thenBody, elseBody)) %}
-  | comment                               {% (id) => ('')%}
 
 
 # Arithmetic expressions
@@ -94,4 +93,3 @@ identifier -> %identifier   {% ([id]) => (id.value) %}
 number -> %number           {% ([num]) => (num.value) %}
 hex -> %hex                 {% ([hex])=> (hex.value)%}
 float -> %float             {% ([float])=> (float.value)%}
-comment -> %comment         {% ([comment])=> ('')%}

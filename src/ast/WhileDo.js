@@ -12,6 +12,7 @@ class WhileDo {
         return `WhileDo(${this.cond.toString()}, ${this.body.toString()})`;
     }
     unparse() {
+        console.log(this.cond);
         return `while ${this.cond.unparse()} do { ${this.body.unparse()} }`;
     }
 }

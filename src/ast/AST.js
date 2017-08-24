@@ -8,9 +8,11 @@ __export(require("./Assignment"));
 __export(require("./IfThenElse"));
 __export(require("./Sequence"));
 __export(require("./WhileDo"));
+__export(require("./Skip"));
 // AExp
 __export(require("./Addition"));
 __export(require("./Multiplication"));
+__export(require("./Division"));
 __export(require("./Numeral"));
 __export(require("./Substraction"));
 __export(require("./Variable"));
