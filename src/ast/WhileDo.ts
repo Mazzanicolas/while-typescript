@@ -17,6 +17,7 @@ export class WhileDo implements Stmt {
   }
 
   unparse(): string {
+    console.log(this.cond);
     return `while ${this.cond.unparse()} do { ${this.body.unparse()} }`;
   }
 }

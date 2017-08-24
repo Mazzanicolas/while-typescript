@@ -13,15 +13,13 @@ console.log("While :: REPL");
 while (true) {
   const lexer = new MyLexer(tokens);
   const parser = new Parser(ParserRules, ParserStart, { lexer });
-  const input = readlineSync.question('> ');
+  const input = readlineSync.question('>>> ');
 
   try {
-    // Parse user input
     parser.feed(input);
     // Print result
     const node: ASTNode = parser.results[0];
-    console.log(node.toString());
-
+    console.log(node.toString());//.toString()
   } catch(parseError) {
     console.log(parseError);
   }

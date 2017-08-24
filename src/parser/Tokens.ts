@@ -14,7 +14,7 @@ export const tokens = {
   '<=':         '<=',
   '==':         '==',
   '=':          '=',
-
+  '/':          '/',
   // Keywords
   'do':         'do',
   'while':      'while',
@@ -25,11 +25,19 @@ export const tokens = {
   'true':       'true',
   'false':      'false',
 
+  //Hex
+  hex:       { match: /0[xX][a-fA-F0-9]+/, value: (h: string) => parseInt(h,16) },
   // Atoms
+  float:     {match: /[0-9]*\.[0-9]+(?:(?:[eE]?-?[0-9]+))?/, value: (f: string)=> parseFloat(f)},
+
   number:       { match: /[0-9]+/, value: (x: string) => (parseFloat(x)) },
 
+  //comentario
+
+  comment: { match: /\/\*(?:[^*]|\*(?:?\/))*\*\// },
+
   // Identifiers
-  identifier:   /[a-zA-Z_$][a-zA-Z0-9_$]*/,
+  identifier:   /[a-zA-Z_][a-zA-Z0-9_]*/,
 
   // Ignored tokens
   _ws:          { match: /[ \t\r\n\f\v]+/, lineBreaks: true },

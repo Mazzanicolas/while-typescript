@@ -1,0 +1,6 @@
+while true do skip;
+while true do {a=1;b=2;}
+while true do {skip;c=2;}
+while true do d=2;
+while false do skip;
+if true then e=4; else f=3;

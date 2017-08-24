@@ -6,10 +6,11 @@ export * from './Assignment';
 export * from './IfThenElse';
 export * from './Sequence';
 export * from './WhileDo';
-
+export * from './Skip';
 // AExp
 export * from './Addition';
 export * from './Multiplication';
+export * from './Division';
 export * from './Numeral';
 export * from './Substraction';
 export * from './Variable';

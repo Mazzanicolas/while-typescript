@@ -22,7 +22,7 @@ export class Sequence implements Stmt {
   unparse(): string {
     const statements = this.statements
       .filter((stmt) => (stmt !== undefined))
-      .map((stmt) => (stmt.toString()))
+      .map((stmt) => (stmt.unparse()))
       .join(" ");
     return `{ ${statements} }`
   }

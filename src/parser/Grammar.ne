@@ -10,13 +10,15 @@ import {
   Conjunction,
   IfThenElse,
   Multiplication,
+  Division,
   Negation,
   Numeral,
   Sequence,
   Substraction,
   TruthValue,
   Variable,
-  WhileDo
+  WhileDo,
+  Skip
 } from '../ast/AST';
 
 import { tokens } from './Tokens';
@@ -30,43 +32,45 @@ const lexer = new MyLexer(tokens);
 
 
 # Statements
-
 stmt ->
     identifier "=" aexp ";"               {% ([id, , exp, ]) => (new Assignment(id, exp)) %}
-  | "skip" ";"                            {% () => {} %}
+  | "skip" ";"                            {% () => (new Skip()) %}
   | "{" stmt:* "}"                        {% ([, statements, ]) => (new Sequence(statements)) %}
   | "while" bexp "do" stmt                {% ([, cond, , body]) => (new WhileDo(cond, body)) %}
   | "if" bexp "then" stmt "else" stmt     {% ([, cond, , thenBody, , elseBody]) => (new IfThenElse(cond, thenBody, elseBody)) %}
+  | comment                               {% (id) => ('')%}
 
 
 # Arithmetic expressions
 
 aexp ->
-    addsub                  {% id %}
+    addsub                  {% ([exp]) => (exp) %}
 
 addsub ->
     addsub "+" muldiv       {% ([lhs, , rhs]) => (new Addition(lhs, rhs)) %}
   | addsub "-" muldiv       {% ([lhs, , rhs]) => (new Substraction(lhs, rhs)) %}
-  | muldiv                  {% id %}
+  | muldiv                  {% ([exp]) => (exp) %}
 
 muldiv ->
     muldiv "*" aexp         {% ([lhs, , rhs]) => (new Multiplication(lhs, rhs)) %}
-  | avalue                  {% id %}
+  | muldiv "/" aexp         {% ([lhs, , rhs]) => (new Division(lhs,rhs)) %}
+  | avalue                  {% ([exp]) => (exp) %}
 
 avalue ->
     "(" aexp ")"            {% ([, aexp, ]) => (aexp) %}
   | number                  {% ([num]) => (new Numeral(num)) %}
   | identifier              {% ([id]) => (new Variable(id)) %}
-
+  | hex                     {% ([id]) => (new Numeral(id)) %}
+  | float                   {% ([id]) => (new Numeral(id)) %}
 
 # Boolean expressions
 
 bexp ->
-    conj                    {% id %}
+    conj                    {% ([exp]) => (exp) %}
 
 conj ->
     conj "&&" comp          {% ([lhs, , rhs]) => (new Conjunction(lhs, rhs)) %}
-  | comp                    {% id %}
+  | comp                    {% ([exp]) => (exp) %}
 
 comp ->
     aexp "==" aexp          {% ([lhs, , rhs]) => (new CompareEqual(lhs, rhs)) %}
@@ -75,7 +79,7 @@ comp ->
 
 neg ->
     "!" bvalue              {% ([, exp]) => (new Negation(exp)) %}
-  | bvalue                  {% id %}
+  | bvalue                  {% ([exp]) => (exp) %}
 
 bvalue ->
     "(" bexp ")"            {% ([, exp, ]) => (exp) %}
@@ -88,3 +92,6 @@ bvalue ->
 
 identifier -> %identifier   {% ([id]) => (id.value) %}
 number -> %number           {% ([num]) => (num.value) %}
+hex -> %hex                 {% ([hex])=> (hex.value)%}
+float -> %float             {% ([float])=> (float.value)%}
+comment -> %comment         {% ([comment])=> ('')%}
