@@ -8,6 +8,7 @@ import {
   CompareEqual,
   CompareLessOrEqual,
   CompareGreaterOrEqual,
+  CompareNotEqual,
   CompareGreater,
   CompareLess,
   Conjunction,
@@ -82,6 +83,7 @@ comp ->
   | aexp ">=" aexp          {% ([lhs, , rhs]) => (new CompareGreaterOrEqual(lhs, rhs)) %}
   | aexp "<" aexp           {% ([lhs, , rhs]) => (new CompareLess(lhs, rhs)) %}
   | aexp ">" aexp           {% ([lhs, , rhs]) => (new CompareGreater(lhs, rhs)) %}
+  | aexp "!=" aexp          {% ([lhs, , rhs]) => (new CompareNotEqual(lhs, rhs)) %}
   | neg
 
 or ->
