@@ -44,8 +44,12 @@ stmt ->
 
 # Arithmetic expressions
 exp ->
-    aexp                    {% id %}
-    |bexp                   {% id %}
+    aexp                   {% id %}
+  | bexp                   {% id %}
+  | bvalue                 {% id %}
+  | avalue                 {% id %}
+  | conj                   {% id %}
+  | comp                   {% id %}
 
 aexp ->
     addsub                  {% id %}
@@ -70,7 +74,8 @@ avalue ->
 # Boolean expressions
 
 bexp ->
-    conj                    {% ([exp]) => (exp) %}
+    bvalue                  {% ([exp]) => (exp) %}
+    | conj                  {% ([exp]) => (exp) %}
     | or                    {% ([exp]) => (exp) %}
 
 conj ->
