@@ -6,7 +6,6 @@ export * from './Assignment';
 export * from './IfThenElse';
 export * from './Sequence';
 export * from './WhileDo';
-export * from './Skip';
 // AExp
 export * from './Addition';
 export * from './Multiplication';
@@ -17,6 +16,10 @@ export * from './Variable';
 // BExp
 export * from './CompareEqual';
 export * from './CompareLessOrEqual';
+export * from './CompareGreaterOrEqual';
+export * from './CompareGreater';
+export * from './CompareLess';
 export * from './Conjunction';
+export * from './Or';
 export * from './Negation';
 export * from './TruthValue';

@@ -10,10 +10,16 @@ export const tokens = {
   '*':          '*',
   '+':          '+',
   '-':          '-',
+  '/':          /\/(?!\*)/,
   ';':          ';',
   '<=':         '<=',
+  '>=':         '>=',
+  '!=':         '!=',
+  '<':          '<',
+  '>':          '>',
   '==':         '==',
   '=':          '=',
+  '||':         '||',
   // Keywords
   'do':         'do',
   'while':      'while',
@@ -23,7 +29,6 @@ export const tokens = {
   'skip':       'skip',
   'true':       'true',
   'false':      'false',
-  //_comment: { match:/\/\*(?:[^*]|\*(?:\/))*\*\//,lineBreaks:true},
   // Hex
   hex:       { match: /0[xX][a-fA-F0-9]+/, value: (h: string) => parseInt(h,16) },
   // Atoms
@@ -33,7 +38,6 @@ export const tokens = {
   // Identifiers
   identifier:   /[a-zA-Z_][a-zA-Z0-9_]*/,
   // Ignored tokens
-//_comment:     { match: /\/\*/, lineBreaks: true }
   _comments: { match:/\/\*(?:[^*]|\*(?:\/))*\*\//,lineBreaks:true },
   _ws:          { match: /[ \t\r\n\f\v]+/, lineBreaks: true },
 };

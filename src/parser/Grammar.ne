@@ -7,7 +7,11 @@ import {
   Assignment,
   CompareEqual,
   CompareLessOrEqual,
+  CompareGreaterOrEqual,
+  CompareGreater,
+  CompareLess,
   Conjunction,
+  Or,
   IfThenElse,
   Multiplication,
   Division,
@@ -17,8 +21,7 @@ import {
   Substraction,
   TruthValue,
   Variable,
-  WhileDo,
-  Skip
+  WhileDo
 } from '../ast/AST';
 
 import { tokens } from './Tokens';
@@ -30,20 +33,21 @@ const lexer = new MyLexer(tokens);
 
 @lexer lexer
 
-
 # Statements
 stmt ->
-    identifier "=" aexp ";"               {% ([id, , exp, ]) => (new Assignment(id, exp)) %}
-  | "skip" ";"                            {% () => (new Skip()) %}
+    identifier "=" exp ";"               {% ([id, , exp, ]) => (new Assignment(id, exp)) %}
   | "{" stmt:* "}"                        {% ([, statements, ]) => (new Sequence(statements)) %}
   | "while" bexp "do" stmt                {% ([, cond, , body]) => (new WhileDo(cond, body)) %}
   | "if" bexp "then" stmt "else" stmt     {% ([, cond, , thenBody, , elseBody]) => (new IfThenElse(cond, thenBody, elseBody)) %}
 
 
 # Arithmetic expressions
+exp ->
+    aexp                    {% id %}
+    |bexp                   {% id %}
 
 aexp ->
-    addsub                  {% ([exp]) => (exp) %}
+    addsub                  {% id %}
 
 addsub ->
     addsub "+" muldiv       {% ([lhs, , rhs]) => (new Addition(lhs, rhs)) %}
@@ -66,6 +70,7 @@ avalue ->
 
 bexp ->
     conj                    {% ([exp]) => (exp) %}
+    | or                    {% ([exp]) => (exp) %}
 
 conj ->
     conj "&&" comp          {% ([lhs, , rhs]) => (new Conjunction(lhs, rhs)) %}
@@ -74,7 +79,14 @@ conj ->
 comp ->
     aexp "==" aexp          {% ([lhs, , rhs]) => (new CompareEqual(lhs, rhs)) %}
   | aexp "<=" aexp          {% ([lhs, , rhs]) => (new CompareLessOrEqual(lhs, rhs)) %}
+  | aexp ">=" aexp          {% ([lhs, , rhs]) => (new CompareGreaterOrEqual(lhs, rhs)) %}
+  | aexp "<" aexp           {% ([lhs, , rhs]) => (new CompareLess(lhs, rhs)) %}
+  | aexp ">" aexp           {% ([lhs, , rhs]) => (new CompareGreater(lhs, rhs)) %}
   | neg
+
+or ->
+     or "||" neg             {% ([lhs, , rhs]) => (new Or(lhs, rhs)) %}
+     | neg                  {% ([exp]) => (exp) %}
 
 neg ->
     "!" bvalue              {% ([, exp]) => (new Negation(exp)) %}
@@ -85,7 +97,6 @@ bvalue ->
   | "true"                  {% () => (new TruthValue(true)) %}
   | "false"                 {% () => (new TruthValue(false)) %}
   | identifier              {% ([id]) => (new Variable(id)) %}
-
 
 # Atoms
 
