@@ -13,7 +13,7 @@ export * from './Division';
 export * from './Numeral';
 export * from './Substraction';
 export * from './Variable';
-// BExp
+//Exp
 export * from './CompareEqual';
 export * from './CompareLessOrEqual';
 export * from './CompareNotEqual';

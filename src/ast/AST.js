@@ -16,7 +16,7 @@ __export(require("./Division"));
 __export(require("./Numeral"));
 __export(require("./Substraction"));
 __export(require("./Variable"));
-// BExp
+//Exp
 __export(require("./CompareEqual"));
 __export(require("./CompareLessOrEqual"));
 __export(require("./Conjunction"));

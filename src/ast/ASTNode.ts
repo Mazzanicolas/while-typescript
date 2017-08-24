@@ -5,7 +5,6 @@ export interface ASTNode {
 
 export interface Exp extends ASTNode { }
 
-
 /**
   Categoría sintáctica de las sentencias (statements) de While, las
   construcciones del lenguaje que modifican (potencialmente) los
