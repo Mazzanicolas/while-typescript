@@ -12,8 +12,8 @@ import {
   CompareGreater,
   CompareLess,
   Conjunction,
-  Or,
   IfThenElse,
+  IfThen,
   Multiplication,
   Division,
   Negation,
@@ -36,23 +36,17 @@ const lexer = new MyLexer(tokens);
 
 # Statements
 stmt ->
-    identifier "=" exp ";"               {% ([id, , exp, ]) => (new Assignment(id, exp)) %}
-  | "{" stmt:* "}"                        {% ([, statements, ]) => (new Sequence(statements)) %}
-  | "while" bexp "do" stmt                {% ([, cond, , body]) => (new WhileDo(cond, body)) %}
-  | "if" bexp "then" stmt "else" stmt     {% ([, cond, , thenBody, , elseBody]) => (new IfThenElse(cond, thenBody, elseBody)) %}
+    stmtelse {% id %}
+    | "if" exp "then" stmtelse "else" stmt    {% ([, cond, , thenBody, , elseBody]) => (new IfThenElse(cond, thenBody,elseBody)) %}
 
+stmtelse ->
+     "{" stmt:* "}"                           {% ([, statements, ]) => (new Sequence(statements)) %}
+    | "while" exp "do" stmt                   {% ([, cond, , body]) => (new WhileDo(cond, body)) %}
+    | identifier "=" exp ";"                  {% ([id, , exp, ]) => (new Assignment(id, exp)) %}
+    | "if" exp "then" stmt                    {% ([, cond, , thenBody]) => (new IfThen(cond, thenBody)) %}
 
-# Arithmetic expressions
 exp ->
-    aexp                   {% id %}
-  | bexp                   {% id %}
-  | bvalue                 {% id %}
-  | avalue                 {% id %}
-  | conj                   {% id %}
-  | comp                   {% id %}
-
-aexp ->
-    addsub                  {% id %}
+    conj                   {% id %}
 
 addsub ->
     addsub "+" muldiv       {% ([lhs, , rhs]) => (new Addition(lhs, rhs)) %}
@@ -60,53 +54,37 @@ addsub ->
   | muldiv                  {% ([exp]) => (exp) %}
 
 muldiv ->
-    muldiv "*" aexp         {% ([lhs, , rhs]) => (new Multiplication(lhs, rhs)) %}
-  | muldiv "/" aexp         {% ([lhs, , rhs]) => (new Division(lhs,rhs)) %}
-  | avalue                  {% ([exp]) => (exp) %}
+    muldiv "*" value        {% ([lhs, , rhs]) => (new Multiplication(lhs, rhs)) %}
+  | muldiv "/" value        {% ([lhs, , rhs]) => (new Division(lhs,rhs)) %}
+  | neg                     {% id %}
 
-avalue ->
-    "(" aexp ")"            {% ([, aexp, ]) => (aexp) %}
-  | number                  {% ([num]) => (new Numeral(num)) %}
+value ->
+    number                  {% ([num]) => (new Numeral(num)) %}
+  | "(" exp ")"             {% ([, exp, ]) => (exp) %}
   | identifier              {% ([id]) => (new Variable(id)) %}
   | hex                     {% ([id]) => (new Numeral(id)) %}
   | float                   {% ([id]) => (new Numeral(id)) %}
-
-# Boolean expressions
-
-bexp ->
-    bvalue                  {% ([exp]) => (exp) %}
-    | conj                  {% ([exp]) => (exp) %}
-    | or                    {% ([exp]) => (exp) %}
+  | "true"                  {% () => (new TruthValue(true)) %}
+  | "false"                 {% () => (new TruthValue(false)) %}
 
 conj ->
     conj "&&" comp          {% ([lhs, , rhs]) => (new Conjunction(lhs, rhs)) %}
   | comp                    {% ([exp]) => (exp) %}
 
 comp ->
-    aexp "==" aexp          {% ([lhs, , rhs]) => (new CompareEqual(lhs, rhs)) %}
-  | aexp "<=" aexp          {% ([lhs, , rhs]) => (new CompareLessOrEqual(lhs, rhs)) %}
-  | aexp ">=" aexp          {% ([lhs, , rhs]) => (new CompareGreaterOrEqual(lhs, rhs)) %}
-  | aexp "<" aexp           {% ([lhs, , rhs]) => (new CompareLess(lhs, rhs)) %}
-  | aexp ">" aexp           {% ([lhs, , rhs]) => (new CompareGreater(lhs, rhs)) %}
-  | aexp "!=" aexp          {% ([lhs, , rhs]) => (new CompareNotEqual(lhs, rhs)) %}
-  | neg
-
-or ->
-     or "||" neg             {% ([lhs, , rhs]) => (new Or(lhs, rhs)) %}
-     | neg                  {% ([exp]) => (exp) %}
+    addsub "==" comp          {% ([lhs, , rhs]) => (new CompareEqual(lhs, rhs)) %}
+  | addsub "<=" comp          {% ([lhs, , rhs]) => (new CompareLessOrEqual(lhs, rhs)) %}
+  | addsub ">=" comp          {% ([lhs, , rhs]) => (new CompareGreaterOrEqual(lhs, rhs)) %}
+  | addsub "<" comp           {% ([lhs, , rhs]) => (new CompareLess(lhs, rhs)) %}
+  | addsub ">" comp           {% ([lhs, , rhs]) => (new CompareGreater(lhs, rhs)) %}
+  | addsub "!=" comp          {% ([lhs, , rhs]) => (new CompareNotEqual(lhs, rhs)) %}
+  | addsub                    {% id %}
 
 neg ->
-    "!" bvalue              {% ([, exp]) => (new Negation(exp)) %}
-  | bvalue                  {% ([exp]) => (exp) %}
-
-bvalue ->
-    "(" bexp ")"            {% ([, exp, ]) => (exp) %}
-  | "true"                  {% () => (new TruthValue(true)) %}
-  | "false"                 {% () => (new TruthValue(false)) %}
-  | identifier              {% ([id]) => (new Variable(id)) %}
+    "!" value              {% ([, exp]) => (new Negation(exp)) %}
+  | value                  {% ([exp]) => (exp) %}
 
 # Atoms
-
 identifier -> %identifier   {% ([id]) => (id.value) %}
 number -> %number           {% ([num]) => (num.value) %}
 hex -> %hex                 {% ([hex])=> (hex.value)%}
